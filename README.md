@@ -92,7 +92,8 @@ Compute nodes can be run interactively, or you can queue longer jobs to run with
 
 ```bash
 # Interactive
-srun -p DevQ -N 1 -A <myproj_id> -t 1:00:00 --pty bash
+srun -p DevQ -N 1 -A <project_id> -t 1:00:00 --pty bash  # DEPRECATED
+salloc -p <queue_name> -N 1 -A <project_id> -t <walltime>
 ```
 
 To submit jobs in a batch and non-interactively, create a bash file with the following
