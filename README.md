@@ -9,6 +9,7 @@ A short but useful quick-start guide to ICHEC. This is written for Linux users a
 - [Loading Modules and Environments](#loading-modules-and-environments)
 - [Requesting Compute Nodes](#requesting-compute-nodes)
 - [Useful Commands](#useful-commands)
+- [Using VSCode on ICHEC](#using-vscode-on-ichec)
 - [Using Aliases](#using-aliases)
 - [Other SLURM Commands](#other-slurm-commands)
 
@@ -142,6 +143,16 @@ ssh -X <username>@kay.ichec.ie
 ```
 
 Where `<username>` will be your assigned ichec username.
+
+---
+
+## Using VSCode on ICHEC
+
+VIm is great for quick editing of files, but if you would like to continue using an IDE such as VSCode, you can set up a remote connection with ease.
+
+    ![Remotes on VSCode](sshremote.png)
+
+On your local computer, install the `Remote Development` extension pack. Open VSCode and you will see the remote connection symbol on the bottom left (orange button with two arrows, it will say "open a remote window" when hovering over it with the mouse). Click this and select "Connect to Host". Enter the ssh command you normally use to connect to ICHEC "ssh -X username@kay.ichec.ie", and your password. Add this host to the ssh config file. A new remote window VSCode will open, and down in the bottom left corner you will see the host that you have connected to.
 
 ---
 
