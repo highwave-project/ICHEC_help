@@ -151,7 +151,7 @@ Where `<username>` will be your assigned ichec username.
 
 VIm is great for quick editing of files, but if you would like to continue using an IDE such as VSCode, you can set up a remote connection with ease.
 
-    ![Remotes on VSCode](sshremote.png)
+![Remotes on VSCode](sshremote.png)
 
 On your local computer, install the `Remote Development` extension pack. Open VSCode and you will see the remote connection symbol on the bottom left (orange button with two arrows, it will say "open a remote window" when hovering over it with the mouse). Click this and select "Connect to Host". Enter the ssh command you normally use to connect to ICHEC "ssh -X username@kay.ichec.ie", and your password. Add this host to the ssh config file. A new remote window VSCode will open, and down in the bottom left corner you will see the host that you have connected to.
 
@@ -171,13 +171,14 @@ if [ -f ~/.bash_aliases ]; then
 fi
 ```
 
-Then you can edit the aliases in a seperate file
+Then you can edit the aliases in a seperate file (recommended) or just put them into the .bashrc file.
 
 ```bash
 vim ~/.bash_aliases
 
 # Inside the .bash_aliases file
 alias envload="module load conda/2; source activate python3; source activate <your_env_name>"
+alias qu="squeue -u $USER"
 ```
 
 ---
