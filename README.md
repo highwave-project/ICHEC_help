@@ -45,7 +45,7 @@ For more details see [ICHEC SSH Keys](https://www.ichec.ie/academic/national-hpc
 Once logged in, you will be in your home directory. You will have access to another work directory where you can store larger files and folders. To get to the work folder you need to go up several directories and then select the work directory and your project code.
 
 ```bash
-cd ../../../work/<project_code>
+cd /ichec/work/<project_code>
 # make a personal directory for your work
 mkdir <username>
 ```
@@ -93,7 +93,8 @@ Compute nodes can be run interactively, or you can queue longer jobs to run with
 
 ```bash
 # Interactive
-srun -p DevQ -N 1 -A <myproj_id> -t 1:00:00 --pty bash
+##srun -p DevQ -N 1 -A <project_id> -t 1:00:00 --pty bash  # DEPRECATED
+salloc -p <queue_name> -N 1 -A <project_id> -t <walltime>
 ```
 
 To submit jobs in a batch and non-interactively, create a bash file with the following
