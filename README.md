@@ -118,9 +118,11 @@ and replacing <myproj_id> with your project id, and the relevent file at the bot
 sbatch mybatchjob.sh
 ```
 
+---
+
 ## Schedule multiple similar jobs
 
-If you want to submit a lot of similar jobs you can do that using the job array. This can be done by adding the following option to the bash file.
+If you want to submit a lot of similar jobs you can do that using a job array. This can be done by adding the following option to the bash file.
 
 Submit a job array with index values between 0 and 30:
 
@@ -140,7 +142,7 @@ Submit a job array with index values between 1 and 7 with a step size of 2 (i.e.
 #SBATCH --array=1-7:2
 ```
 
-Each job has the following environment variable set:
+Each job has the following environment variables set:
 1. **`SLURM_ARRAY_JOB_ID`**: The first job ID
 1. **`SLURM_ARRAY_TASK_ID`**: The job array index value
 1. **`SLURM_ARRAY_TASK_COUNT`**: The number of tasks in the job array
@@ -187,7 +189,9 @@ SLURM_ARRAY_TASK_MAX=3
 SLURM_ARRAY_TASK_MIN=1
 ```
 
-The following example will create 7 jobs (0 to 6). Each job will run an executable with a different xml file as input. All jobs will have 1 node and a limit wall time of 1 hour:
+### **Complete example**
+
+The following job submission will create 7 jobs (0 to 6). Each job will run an executable with a different xml file as input. All jobs will have 1 node and a limit wall time of 1 hour:
 ```bash
 #!/bin/bash
 
@@ -216,7 +220,7 @@ $ scancel 20_4 20_5
 $ scancel 20
 ```
 
-**Note**: Even though you can schedule as many jobs as you want ICHEC only allows for 2 jobs to run simultaneously.
+**Note**: Even though you can schedule as many jobs as you want ICHEC only allows for 2 jobs to run simultaneously per user.
 
 ---
 
