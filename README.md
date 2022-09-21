@@ -61,6 +61,13 @@ scp project/my_file.c <username>@kay.ichec.ie:~/project/my_new_file.c
 scp -r project <username>@kay.ichec.ie:~/project
 ```
 
+To copy from ICHEC to your local machine simply reverse the order of the paths.
+It is also easy to use rsync where you may want to include certain files and exclude others using the 
+
+```bash
+rsync -r <username>@kay.ichec.ie:<remote_path> <local_path> --include file_pattern* --exclude unwanted_files*
+```
+
 ---
 
 ## Loading Modules and Environments
@@ -89,7 +96,7 @@ source activate <new_env>
 
 ## Requesting Compute Nodes
 
-Compute nodes can be run interactively, or you can queue longer jobs to run with more resourses.
+Compute nodes can be run interactively (up to 1 hour and DevQ only), or you can queue longer jobs to run with more resourses.
 
 ```bash
 # Interactive
