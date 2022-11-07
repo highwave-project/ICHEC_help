@@ -8,6 +8,7 @@ A short but useful quick-start guide to ICHEC. This is written for Linux users a
 - [Filesystem and Copying](#filesystem-and-copying)
 - [Loading Modules and Environments](#loading-modules-and-environments)
 - [Requesting Compute Nodes](#requesting-compute-nodes)
+- [Schedule multiple similar jobs](#schedule-multiple-similar-jobs)
 - [Useful Commands](#useful-commands)
 - [Using VSCode on ICHEC](#using-vscode-on-ichec)
 - [Using Aliases](#using-aliases)
@@ -63,7 +64,7 @@ scp -r project <username>@kay.ichec.ie:~/project
 ```
 
 To copy from ICHEC to your local machine simply reverse the order of the paths.
-It is also easy to use rsync where you may want to include certain files and exclude others using the 
+It is also easy to use rsync where you may want to include certain files and exclude others using the following
 
 ```bash
 rsync -r <username>@kay.ichec.ie:<remote_path> <local_path> --include file_pattern* --exclude unwanted_files*
@@ -151,6 +152,7 @@ Submit a job array with index values between 1 and 7 with a step size of 2 (i.e.
 ```
 
 Each job has the following environment variables set:
+
 1. **`SLURM_ARRAY_JOB_ID`**: The first job ID
 1. **`SLURM_ARRAY_TASK_ID`**: The job array index value
 1. **`SLURM_ARRAY_TASK_COUNT`**: The number of tasks in the job array
@@ -158,6 +160,7 @@ Each job has the following environment variables set:
 1. **`SLURM_ARRAY_TASK_MIN`**: The lowest job array index value
 
 For example the following job submission will generate 3 jobs:
+
 ```bash
 #!/bin/sh
 
@@ -169,12 +172,14 @@ For example the following job submission will generate 3 jobs:
 ```
 
 If the `sbatch` responds:
-```
+
+```bash
 Submitted batch job 36
 ```
+
 The following environment variables will be set:
 
-```
+```bash
 SLURM_JOB_ID=36
 SLURM_ARRAY_JOB_ID=36
 SLURM_ARRAY_TASK_ID=1
@@ -200,6 +205,7 @@ SLURM_ARRAY_TASK_MIN=1
 ### **Complete example**
 
 The following job submission will create 7 jobs (0 to 6). Each job will run an executable with a different xml file as input. All jobs will have 1 node and a limit wall time of 1 hour:
+
 ```bash
 #!/bin/bash
 
@@ -217,15 +223,16 @@ module load <dependencies>
 Two additional options are available to specify a job's stdin, stdout, and stderr file names: **%A** will be replaced by the value of SLURM_ARRAY_JOB_ID (as defined above) and **%a** will be replaced by the value of SLURM_ARRAY_TASK_ID (as defined above). The default output file for a job array is `slurm-%A_%a.out`.
 
 To cancel a job or multible jobs you can use:
-```
+
+```bash
 # Cancel array ID 1 to 3 from job array 20
-$ scancel 20_[1-3]
+scancel 20_[1-3]
 
 # Cancel array ID 4 and 5 from job array 20
-$ scancel 20_4 20_5
+scancel 20_4 20_5
 
 # Cancel all elements from job array 20
-$ scancel 20
+scancel 20
 ```
 
 **Note**: Even though you can schedule as many jobs as you want ICHEC only allows for 2 jobs to run simultaneously per user.
