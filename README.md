@@ -62,6 +62,13 @@ scp project/my_file.c <username>@kay.ichec.ie:~/project/my_new_file.c
 scp -r project <username>@kay.ichec.ie:~/project
 ```
 
+To copy from ICHEC to your local machine simply reverse the order of the paths.
+It is also easy to use rsync where you may want to include certain files and exclude others using the 
+
+```bash
+rsync -r <username>@kay.ichec.ie:<remote_path> <local_path> --include file_pattern* --exclude unwanted_files*
+```
+
 ---
 
 ## Loading Modules and Environments
@@ -90,7 +97,7 @@ source activate <new_env>
 
 ## Requesting Compute Nodes
 
-Compute nodes can be run interactively, or you can queue longer jobs to run with more resourses.
+Compute nodes can be run interactively (up to 1 hour and DevQ only), or you can queue longer jobs to run with more resourses.
 
 ```bash
 # Interactive
@@ -118,6 +125,110 @@ and replacing <myproj_id> with your project id, and the relevent file at the bot
 ```bash
 sbatch mybatchjob.sh
 ```
+
+---
+
+## Schedule multiple similar jobs
+
+If you want to submit a lot of similar jobs you can do that using a job array. This can be done by adding the following option to the bash file.
+
+Submit a job array with index values between 0 and 30:
+
+```bash
+#SBATCH --array=0-30
+```
+
+Submit a job array with index values of 1, 3, 5 and 7:
+
+```bash
+#SBATCH --array=1,3,5,7
+```
+
+Submit a job array with index values between 1 and 7 with a step size of 2 (i.e. 1, 3, 5 and 7)
+
+```bash
+#SBATCH --array=1-7:2
+```
+
+Each job has the following environment variables set:
+1. **`SLURM_ARRAY_JOB_ID`**: The first job ID
+1. **`SLURM_ARRAY_TASK_ID`**: The job array index value
+1. **`SLURM_ARRAY_TASK_COUNT`**: The number of tasks in the job array
+1. **`SLURM_ARRAY_TASK_MAX`**: The highest job array index value
+1. **`SLURM_ARRAY_TASK_MIN`**: The lowest job array index value
+
+For example the following job submission will generate 3 jobs:
+```bash
+#!/bin/sh
+
+#SBATCH --array=1-3
+#SBATCH --time=00:20:00
+#SBATCH --nodes=2
+#SBATCH -A <myproj_id>
+#SBATCH -p DevQ
+```
+
+If the `sbatch` responds:
+```
+Submitted batch job 36
+```
+The following environment variables will be set:
+
+```
+SLURM_JOB_ID=36
+SLURM_ARRAY_JOB_ID=36
+SLURM_ARRAY_TASK_ID=1
+SLURM_ARRAY_TASK_COUNT=3
+SLURM_ARRAY_TASK_MAX=3
+SLURM_ARRAY_TASK_MIN=1
+
+SLURM_JOB_ID=37
+SLURM_ARRAY_JOB_ID=36
+SLURM_ARRAY_TASK_ID=2
+SLURM_ARRAY_TASK_COUNT=3
+SLURM_ARRAY_TASK_MAX=3
+SLURM_ARRAY_TASK_MIN=1
+
+SLURM_JOB_ID=38
+SLURM_ARRAY_JOB_ID=36
+SLURM_ARRAY_TASK_ID=3
+SLURM_ARRAY_TASK_COUNT=3
+SLURM_ARRAY_TASK_MAX=3
+SLURM_ARRAY_TASK_MIN=1
+```
+
+### **Complete example**
+
+The following job submission will create 7 jobs (0 to 6). Each job will run an executable with a different xml file as input. All jobs will have 1 node and a limit wall time of 1 hour:
+```bash
+#!/bin/bash
+
+#SBATCH --array=0-6
+#SBATCH -A <myproj_id>
+#SBATCH --nodes=1
+#SBATCH -p DevQ
+#SBATCH --time=1:00:00
+
+module load <dependencies>
+
+<executable> input_file_${SLURM_ARRAY_TASK_ID}.xml
+```
+
+Two additional options are available to specify a job's stdin, stdout, and stderr file names: **%A** will be replaced by the value of SLURM_ARRAY_JOB_ID (as defined above) and **%a** will be replaced by the value of SLURM_ARRAY_TASK_ID (as defined above). The default output file for a job array is `slurm-%A_%a.out`.
+
+To cancel a job or multible jobs you can use:
+```
+# Cancel array ID 1 to 3 from job array 20
+$ scancel 20_[1-3]
+
+# Cancel array ID 4 and 5 from job array 20
+$ scancel 20_4 20_5
+
+# Cancel all elements from job array 20
+$ scancel 20
+```
+
+**Note**: Even though you can schedule as many jobs as you want ICHEC only allows for 2 jobs to run simultaneously per user.
 
 ---
 
