@@ -327,6 +327,9 @@ Because the Basilisk code is on ICHEC it is possible to compile directly with th
 
 ```bash
 qcc -source -D_MPI=1 example.c -I$BASILISK
+
+# On ICHEC you can also compile with the command
+$BASILISK/qcc -source -D_MPI=1 example.c -I$BASILISK
 ```
 
 - This produces the source file `_example.c` which should be copied over to ICHEC (Note the underscore prefix!).
