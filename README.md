@@ -11,6 +11,7 @@ A short but useful quick-start guide to ICHEC. This is written for Linux users a
 - [Useful Commands](#useful-commands)
 - [Using VSCode on ICHEC](#using-vscode-on-ichec)
 - [Using Aliases](#using-aliases)
+- [Basilisk](#basilisk)
 - [Other SLURM Commands](#other-slurm-commands)
 
 ---
@@ -183,6 +184,45 @@ alias qu="squeue -u $USER"
 
 ---
 
+## Basilisk
+
+The Basilisk source files are in the HIGHWAVE project directory on ICHEC already along with the graphics libraries for OSMesa and GLU. To ensure issue free compilation of your basilisk code it is recommended to follow this proceedure.
+
+### Setting up Basilisk for the First Time
+
+- Install Basilisk on your local computer for development purposes. You can follow the [Basilisk installation instructions](http://basilisk.fr/src/INSTALL)
+- While logged into ICHEC, edit your `.bashrc` file which is in your home directory to include the following lines.
+
+```bash
+export BASILISK=/ichec/work/ndear024a/rsmith/basilisk/src
+export PATH=$PATH:$BASILISK
+
+export MESA=$BASILISK/../mesa-17.2.4
+export GLU=$BASILISK/../glu-9.0.0
+```
+
+### Compiling Basilisk
+
+Because the Basilisk code is on ICHEC it is possible to compile directly with the qcc compiler, however if using MPI then the following method should be used.
+
+- On your local computer you should compile to source with the MPI flag
+
+```bash
+qcc -source -D_MPI=1 example.c -I$BASILISK
+```
+
+- This produces the source file `_example.c` which should be copied over to ICHEC (Note the underscore prefix!).
+- On ICHEC you can then use the `mpicc` compiler to generate the executable.
+
+```bash
+module load intel/2019u5
+mpicc -Wall -std=c99 -O2 _example.c -o example -L$BASILISK/gl -L$MESA/lib -L$GLU/lib -lOSMesa -lGLU -lfb_osmesa -lppr -lglutils -lgfortran
+```
+
+- You may not require all the above libraries depending on your code (graphics with OSMesa or compiling fortran code etc.), but it is okay to copy paste the full line anyways.
+
+---
+
 ## Other SLURM Commands
 
-See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation/slurm-commands)
+See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation/slurm-commands) and the [SLURM documentation](https://slurm.schedmd.com/documentation.html)
