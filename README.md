@@ -395,6 +395,9 @@ Because the Basilisk code is on ICHEC it is possible to compile directly with th
 
 ```bash
 qcc -source -D_MPI=1 example.c -I$BASILISK
+
+# On ICHEC you can also compile with the command
+$BASILISK/qcc -source -D_MPI=1 example.c -I$BASILISK
 ```
 
 - This produces the source file `_example.c` which should be copied over to ICHEC (Note the underscore prefix!).
@@ -402,7 +405,7 @@ qcc -source -D_MPI=1 example.c -I$BASILISK
 
 ```bash
 module load intel/2019u5
-mpicc -Wall -std=c99 -O2 _example.c -o example -L$BASILISK/gl -L$MESA/lib -L$GLU/lib -lOSMesa -lGLU -lfb_osmesa -lppr -lglutils -lgfortran
+mpicc -Wall -std=c99 -O2 _example.c -o example -L$BASILISK/gl -L$MESA/lib -L$GLU/lib -L$BASILISK/ppr -lOSMesa -lGLU -lfb_osmesa -lppr -lglutils -lgfortran -lm
 ```
 
 - You may not require all the above libraries depending on your code (graphics with OSMesa or compiling fortran code etc.), but it is okay to copy paste the full line anyways.
