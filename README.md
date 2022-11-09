@@ -341,7 +341,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 PATH="$HOME/bin:$PATH" make -j10 && \
 make install
 
-sudo apt-get install libnuma-dev && \
 cd ~/ffmpeg_sources && \
 wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
 tar xjvf x265.tar.bz2 && \
