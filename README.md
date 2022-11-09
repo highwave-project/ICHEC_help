@@ -319,6 +319,74 @@ export MESA=$BASILISK/../mesa-17.2.4
 export GLU=$BASILISK/../glu-9.0.0
 ```
 
+### Additional Libraries
+
+It may be easier to locally install OSMesa, GLU and FFmpeg yourself afterwhich you should not have to worry about exporting those paths and them being linked. The following code block can be copy and pasted to the terminal, and may take an hour or two to finish.
+
+```bash
+mkdir ~/ffmpeg_sources
+cd ~/ffmpeg_sources && \
+wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 && \
+tar xjvf nasm-2.15.05.tar.bz2 && \
+cd nasm-2.15.05 && \
+./autogen.sh && \
+PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
+make -j10 && \
+make install
+
+cd ~/ffmpeg_sources && \
+git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
+cd x264 && \
+PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
+PATH="$HOME/bin:$PATH" make -j10 && \
+make install
+
+sudo apt-get install libnuma-dev && \
+cd ~/ffmpeg_sources && \
+wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
+tar xjvf x265.tar.bz2 && \
+cd multicoreware*/build/linux && \
+PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
+PATH="$HOME/bin:$PATH" make -j10 && \
+make install
+
+cd ~/ffmpeg_sources && \
+wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
+tar xjvf ffmpeg-snapshot.tar.bz2 && \
+cd ffmpeg && \
+PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
+  --prefix="$HOME/ffmpeg_build" \
+  --pkg-config-flags="--static" \
+  --extra-cflags="-I$HOME/ffmpeg_build/include" \
+  --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+  --extra-libs="-lpthread -lm" \
+  --ld="g++" \
+  --bindir="$HOME/bin" \
+  --enable-gpl \
+  --enable-libx264 \
+  --enable-libx265 && \
+PATH="$HOME/bin:$PATH" make -j10 && \
+make install
+
+cd ~
+wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz
+tar xzvf mesa-17.2.4.tar.gz
+cd mesa-17.2.4
+./configure --prefix=$HOME/local --enable-osmesa \
+            --with-gallium-drivers=swrast                \
+            --disable-driglx-direct --disable-dri --disable-gbm --disable-egl
+make -j10
+make install
+
+cd ~
+wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz
+tar xzvf glu-9.0.0.tar.gz
+cd glu-9.0.0
+./configure --prefix=$HOME/local
+make -j10
+make install
+```
+
 ### Compiling Basilisk
 
 Because the Basilisk code is on ICHEC it is possible to compile directly with the qcc compiler, however if using MPI then the following method should be used.
