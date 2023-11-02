@@ -233,6 +233,9 @@ scancel 20_4 20_5
 
 # Cancel all elements from job array 20
 scancel 20
+
+# Cancel jobs from 12345 to 12367
+scancel {12345..12367}
 ```
 
 **Note**: Even though you can schedule as many jobs as you want ICHEC only allows for 2 jobs to run simultaneously per user.
