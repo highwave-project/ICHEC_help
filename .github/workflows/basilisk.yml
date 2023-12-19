@@ -33,6 +33,9 @@ jobs:
       - name: run install script
         run: ./install_basilisk.sh
       
+      - name: load env vars
+        run: source ~/.bashrc
+      
       - name: testing
         run: |
           export TESTING=yes
@@ -47,8 +50,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: install mesa dep
-        run: sudo apt install xcb 
+      - name: install testing deps
+        run: sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit
         
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
@@ -61,6 +64,9 @@ jobs:
   
       - name: run install script
         run: ./install_basilisk.sh
+
+      - name: load env vars
+        run: source ~/.bashrc
       
       - name: testing
         run: |
