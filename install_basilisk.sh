@@ -5,7 +5,6 @@ fi
 # Install packages
 if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
-    exit
     if which apt; then
         sudo apt install darcs make gawk gfortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit
     elif which pacman; then
