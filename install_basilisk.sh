@@ -34,7 +34,6 @@ if ! grep -q 'BASILISK' $shellrc; then
     echo 'export PATH=$PATH:$BASILISK' >> $shellrc  # single quotes to not expand $PATH
 fi
 
-exit
 if [[ ! -z $BUILD_GRAPHICS ]]; then
     echo "Graphics building enabled..."
     cd ppr && make
