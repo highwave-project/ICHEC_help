@@ -18,9 +18,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      
+
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
 
@@ -44,9 +42,7 @@ jobs:
   
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      
+
       - name: install testing deps
         run: |
           sudo apt update
