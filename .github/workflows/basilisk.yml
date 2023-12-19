@@ -26,20 +26,17 @@ jobs:
 
       - name: modify permissions
         run: chmod a+x install_basilisk.sh
-        
-      - name: export env var
-        run: export LOCAL_INSTALL=yes
   
       - name: run install script
+        env:
+          LOCAL_INSTALL : yes
         run: ./install_basilisk.sh
-      
-      - name: load env vars
-        run: source ~/.bashrc
-      
+
       - name: testing
-        run: |
-          export TESTING=yes
-          ./install_basilisk.sh
+        env: 
+          TESTING : yes
+          BASILISK: ~/basilisk/src/
+        run: ./install_basilisk.sh
 
   graphics:
     # The type of runner that the job will run on
@@ -60,17 +57,14 @@ jobs:
 
       - name: modify permissions
         run: chmod a+x install_basilisk.sh
-        
-      - name: export env var
-        run: export BUILD_GRAPHICS=yes
   
       - name: run install script
+        env: 
+          BUILD_TESTING : yes
         run: ./install_basilisk.sh
 
-      - name: load env vars
-        run: source ~/.bashrc
-      
       - name: testing
-        run: |
-          export TESTING=yes
-          ./install_basilisk.sh
+        env:
+          TESTING : yes
+          BASILISK: ~/basilisk/src/
+        run: ./install_basilisk.sh
