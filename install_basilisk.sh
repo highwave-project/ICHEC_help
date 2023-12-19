@@ -28,6 +28,9 @@ ln -s config.gcc config
 make -k -j $(nproc)
 make   # incase of any failures from previous command
 
+export BASILISK=$PWD
+export PATH=$PATH:$BASILISK
+
 if [[ -e ~/.zshrc ]]; then
     shellrc=~/.zshrc
 elif [[ -e ~/.bashrc ]]; then
@@ -130,7 +133,6 @@ else
     echo "Graphics build disabled..."
 fi
 
-source $shellrc
 cd $BASILISK/ppr && make
 cd $BASILISK/gl && make libglutils.a libfb_osmesa.a
 
