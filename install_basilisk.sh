@@ -118,13 +118,15 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     ./configure --prefix=$HOME/local
     make -j $(nproc)
     make install
+    cd ..
 
     echo "export MESA=~/mesa-17.2.4" >> $shellrc
     echo "export GLU=~/glu-9.0.0" >> $shellrc
+
+    echo "Cleaning up..."
+    cd ~ && rm -r *.tar.gz ffmpeg_sources
 else
     echo "Graphics build disabled..."
 fi
 
 echo "Installation finished..."
-echo "Cleaning up..."
-cd ~ && rm -r *.tar.gz ffmpeg_sources
