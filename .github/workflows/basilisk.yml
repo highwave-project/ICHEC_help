@@ -51,7 +51,9 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: install testing deps
-        run: sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit
+        run: |
+          sudo apt update
+          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit
         
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
@@ -72,4 +74,3 @@ jobs:
         run: |
           export TESTING=yes
           ./install_basilisk.sh
-
