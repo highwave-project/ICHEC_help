@@ -35,7 +35,7 @@ jobs:
       - name: testing
         env: 
           TESTING : yes
-          BASILISK: ~/basilisk/src/
+          BASILISK: ~/basilisk/src
         run: ./install_basilisk.sh
 
   graphics:
@@ -66,5 +66,5 @@ jobs:
       - name: testing
         env:
           TESTING : yes
-          BASILISK: ~/basilisk/src/
+          BASILISK: ~/basilisk/src
         run: ./install_basilisk.sh
