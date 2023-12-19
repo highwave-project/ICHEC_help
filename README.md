@@ -307,89 +307,60 @@ alias qu="squeue -u $USER"
 
 ## Basilisk
 
-The Basilisk source files are in the HIGHWAVE project directory on ICHEC already along with the graphics libraries for OSMesa and GLU. To ensure issue free compilation of your basilisk code it is recommended to follow this proceedure.
+To ensure issue free compilation of your basilisk code it is recommended to use the install script, you can also follow the steps on the [Basilisk website](http://basilisk.fr/src/INSTALL) yourself.
+
+### Helpful links
+
+- [Basilisk C manual](http://basilisk.fr/Basilisk%20C)
+- [Installation guide](http://basilisk.fr/src/INSTALL)
+- [Tutorial](http://basilisk.fr/Tutoria)
+- [Examples](http://basilisk.fr/src/examples/README)
 
 ### Setting up Basilisk for the First Time
 
-- Install Basilisk on your local computer for development purposes. You can follow the [Basilisk installation instructions](http://basilisk.fr/src/INSTALL)
-- While logged into ICHEC, edit your `.bashrc` file which is in your home directory to include the following lines.
+- An install script is provided in this repo. You can download and run it with the following command.
+- NOTE: the environment variables you should select based on the install you want. If you do not explicitely set these, the default will be an install without sudo and without ffmpeg/OSMesa/GLU.
+    - `export LOCAL_INSTALL=yes`: you have sudo access
+    - `export BUILD_GRAPHICS=yes`: you require ffmpeg compiled, or OSMesa or GLU (This will take a long time...)
 
 ```bash
-export BASILISK=/ichec/work/ndear024a/rsmith/basilisk/src
-export PATH=$PATH:$BASILISK
-
-export MESA=$BASILISK/../mesa-17.2.4
-export GLU=$BASILISK/../glu-9.0.0
+cd ~
+wget https://www.raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
+chmod a+x install_basilisk.sh
+./install_basilisk.sh
 ```
+
+- Install Basilisk on your local computer for development purposes. You can follow the [Basilisk installation instructions](http://basilisk.fr/src/INSTALL)
+
+    ```bash
+    cd ~ && \
+    wget https://www.raw.githubusercontent.com/highwave-projectICHEC_help/main/install_basilisk.sh && \
+    chmod a+x install_basilisk.sh && \
+    export LOCAL=yes && \
+    ./install_basilisk
+    ```
+
+- Redo the install on the remote cluster. You should be in the folder which contains basilisk
+
+    ```bash
+    wget https://www.raw.githubusercontent.com/highwave-projectICHEC_help/main/install_basilisk.sh && \
+    chmod a+x install_basilisk.sh && \
+    export BUILD_GRAPHICS=yes && \
+    ./install_basilisk
+    ```
 
 ### Additional Libraries
 
-It may be easier to locally install OSMesa, GLU and FFmpeg yourself afterwhich you should not have to worry about exporting those paths and them being linked. The following code block can be copy and pasted to the terminal, and may take an hour or two to finish.
-
-```bash
-mkdir ~/ffmpeg_sources
-cd ~/ffmpeg_sources && \
-wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 && \
-tar xjvf nasm-2.15.05.tar.bz2 && \
-cd nasm-2.15.05 && \
-./autogen.sh && \
-PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
-make -j10 && \
-make install
-
-cd ~/ffmpeg_sources && \
-git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
-cd x264 && \
-PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
-PATH="$HOME/bin:$PATH" make -j10 && \
-make install
-
-cd ~/ffmpeg_sources && \
-wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
-tar xjvf x265.tar.bz2 && \
-cd multicoreware*/build/linux && \
-PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
-PATH="$HOME/bin:$PATH" make -j10 && \
-make install
-
-cd ~/ffmpeg_sources && \
-wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
-tar xjvf ffmpeg-snapshot.tar.bz2 && \
-cd ffmpeg && \
-PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
-  --prefix="$HOME/ffmpeg_build" \
-  --pkg-config-flags="--static" \
-  --extra-cflags="-I$HOME/ffmpeg_build/include" \
-  --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
-  --extra-libs="-lpthread -lm" \
-  --ld="g++" \
-  --bindir="$HOME/bin" \
-  --enable-gpl \
-  --enable-libx264 \
-  --enable-libx265 && \
-PATH="$HOME/bin:$PATH" make -j10 && \
-make install
-
-cd ~
-wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz
-tar xzvf mesa-17.2.4.tar.gz
-cd mesa-17.2.4
-./configure --prefix=$HOME/local --enable-osmesa \
-            --with-gallium-drivers=swrast                \
-            --disable-driglx-direct --disable-dri --disable-gbm --disable-egl
-make -j10
-make install
-
-cd ~
-wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz
-tar xzvf glu-9.0.0.tar.gz
-cd glu-9.0.0
-./configure --prefix=$HOME/local
-make -j10
-make install
-```
+It may be easier to locally install OSMesa, GLU and FFmpeg yourself afterwhich you should not have to worry about exporting those paths and them being linked. This can be achieved through the install script above with `export BUILD_GRAPHICS=yes`
 
 ### Compiling Basilisk
+
+- Basilisk comes with a helpful Makefile that can be used in compilation. You just need to create your own Makefile for your project and include the following
+
+```makefile
+CFLAGS += -O2
+include $(BASILISK)/Makefile.defs
+```
 
 Because the Basilisk code is on ICHEC it is possible to compile directly with the qcc compiler, however if using MPI then the following method should be used.
 
