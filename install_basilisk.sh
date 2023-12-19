@@ -1,5 +1,8 @@
-if [[ ! -z $CLEANUP ]]; then
-    rm -rv *.tar.gz basilisk glu-9.0.0 mesa-17.2.4 ffmpeg* local* bin*
+if [[ ! -z $TESTING ]]; then
+    echo "Testing only"
+    cd $BASILISK/test
+    make -k -j $(nproc)
+    exit 0
 fi
 
 # Install packages
@@ -40,8 +43,6 @@ fi
 
 if [[ ! -z $BUILD_GRAPHICS ]]; then
     echo "Graphics building enabled..."
-    cd ppr && make
-    cd ../gl && make libglutils.a libfb_osmesa.a
 
     if ! which ffmpeg; then
         mkdir ~/ffmpeg_sources
@@ -128,5 +129,9 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
 else
     echo "Graphics build disabled..."
 fi
+
+source $shellrc
+cd $BASILISK/ppr && make
+cd $BASILISK/gl && make libglutils.a libfb_osmesa.a
 
 echo "Installation finished..."
