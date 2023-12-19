@@ -36,6 +36,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: install mesa dep
+        run: sudo apt install x11-xcb  
   
       - name: run install script
         run: |
