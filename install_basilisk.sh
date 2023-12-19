@@ -1,3 +1,7 @@
+if [[ ! -z $CLEANUP ]]; then
+    rm -rv *.tar.gz basilisk glu-9.0.0 mesa-17.2.4 ffmpeg* local* bin*
+fi
+
 # Install packages
 if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
@@ -18,7 +22,7 @@ fi
 echo "Building Basilisk..."
 cd basilisk/src
 ln -s config.gcc config
-make -Ok -j $(nproc)
+make -k -j $(nproc)
 make   # incase of any failures from previous command
 
 if [[ -e ~/.zshrc ]]; then
@@ -122,3 +126,5 @@ else
 fi
 
 echo "Installation finished..."
+echo "Cleaning up..."
+cd ~ && rm -r *.tar.gz ffmpeg_sources
