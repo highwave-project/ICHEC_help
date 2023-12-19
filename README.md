@@ -307,6 +307,8 @@ alias qu="squeue -u $USER"
 
 ## Basilisk
 
+[![Basilisk Installer](https://github.com/highwave-project/ICHEC_help/actions/workflows/basilisk.yml/badge.svg)](https://github.com/highwave-project/ICHEC_help/actions/workflows/basilisk.yml)
+
 To ensure issue free compilation of your basilisk code it is recommended to use the install script, you can also follow the steps on the [Basilisk website](http://basilisk.fr/src/INSTALL) yourself.
 
 ### Helpful links
@@ -321,7 +323,7 @@ To ensure issue free compilation of your basilisk code it is recommended to use 
 - An install script is provided in this repo. You can download and run it with the following command.
 - NOTE: the environment variables you should select based on the install you want. If you do not explicitely set these, the default will be an install without sudo and without ffmpeg/OSMesa/GLU.
     - `export LOCAL_INSTALL=yes`: you have sudo access
-    - `export BUILD_GRAPHICS=yes`: you require ffmpeg compiled, or OSMesa or GLU (This will take a long time...)
+    - `export BUILD_GRAPHICS=yes`: you require ffmpeg compiled, or OSMesa or GLU (This may take a long time...)
     - You likely only require one of the above, as if you have sudo access you can simply install the graphics binaries
 
 ```bash
