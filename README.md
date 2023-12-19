@@ -322,10 +322,11 @@ To ensure issue free compilation of your basilisk code it is recommended to use 
 - NOTE: the environment variables you should select based on the install you want. If you do not explicitely set these, the default will be an install without sudo and without ffmpeg/OSMesa/GLU.
     - `export LOCAL_INSTALL=yes`: you have sudo access
     - `export BUILD_GRAPHICS=yes`: you require ffmpeg compiled, or OSMesa or GLU (This will take a long time...)
+    - You likely only require one of the above, as if you have sudo access you can simply install the graphics binaries
 
 ```bash
 cd ~
-wget https://www.raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
+wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
 chmod a+x install_basilisk.sh
 ./install_basilisk.sh
 ```
@@ -334,16 +335,17 @@ chmod a+x install_basilisk.sh
 
     ```bash
     cd ~ && \
-    wget https://www.raw.githubusercontent.com/highwave-projectICHEC_help/main/install_basilisk.sh && \
+    wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
     chmod a+x install_basilisk.sh && \
-    export LOCAL=yes && \
+    export LOCAL=yes && \ # to install additional packages
     ./install_basilisk
     ```
 
 - Redo the install on the remote cluster. You should be in the folder which contains basilisk
 
     ```bash
-    wget https://www.raw.githubusercontent.com/highwave-projectICHEC_help/main/install_basilisk.sh && \
+    cd ~ && \
+    wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
     chmod a+x install_basilisk.sh && \
     export BUILD_GRAPHICS=yes && \
     ./install_basilisk
