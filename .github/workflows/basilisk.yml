@@ -20,12 +20,22 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: get installer script
+        run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
 
+      - name: modify permissions
+        run: chmod a+x install_basilisk.sh
+        
+      - name: export env var
+        run: export LOCAL_INSTALL=yes
+  
       - name: run install script
+        run: ./install_basilisk.sh
+      
+      - name: testing
         run: |
-          wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
-          chmod a+x install_basilisk.sh
-          export LOCAL_INSTALL=yes
+          export TESTING=yes
           ./install_basilisk.sh
 
   graphics:
@@ -38,11 +48,22 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: install mesa dep
-        run: sudo apt install xcb  
+        run: sudo apt install xcb 
+        
+      - name: get installer script
+        run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
+
+      - name: modify permissions
+        run: chmod a+x install_basilisk.sh
+        
+      - name: export env var
+        run: export BUILD_GRAPHICS=yes
   
       - name: run install script
+        run: ./install_basilisk.sh
+      
+      - name: testing
         run: |
-          wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
-          chmod a+x install_basilisk.sh
-          export BUILD_GRAPHICS=yes
+          export TESTING=yes
           ./install_basilisk.sh
+
