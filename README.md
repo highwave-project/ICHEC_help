@@ -331,25 +331,30 @@ chmod a+x install_basilisk.sh
 ./install_basilisk.sh
 ```
 
+<details>
+<summary>Example of setting flags</summary>
+
 - Install Basilisk on your local computer for development purposes. You can follow the [Basilisk installation instructions](http://basilisk.fr/src/INSTALL)
 
-    ```bash
-    cd ~ && \
-    wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
-    chmod a+x install_basilisk.sh && \
-    export LOCAL=yes && \ # to install additional packages
-    ./install_basilisk
-    ```
+```bash
+cd ~ && \
+wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
+chmod a+x install_basilisk.sh && \
+export LOCAL_INSTALL=yes && \
+./install_basilisk.sh
+```
 
 - Redo the install on the remote cluster. You should be in the folder which contains basilisk
 
-    ```bash
-    cd ~ && \
-    wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
-    chmod a+x install_basilisk.sh && \
-    export BUILD_GRAPHICS=yes && \
-    ./install_basilisk
-    ```
+```bash
+cd ~ && \
+wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh && \
+chmod a+x install_basilisk.sh && \
+export BUILD_GRAPHICS=yes && \
+./install_basilisk.sh
+```
+
+</details>
 
 ### Additional Libraries
 
