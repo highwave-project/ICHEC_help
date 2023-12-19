@@ -60,7 +60,7 @@ jobs:
   
       - name: run install script
         env: 
-          BUILD_TESTING : yes
+          BUILD_GRAPHICS : yes
         run: ./install_basilisk.sh
 
       - name: testing
