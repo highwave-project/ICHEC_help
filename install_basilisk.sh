@@ -25,7 +25,7 @@ fi
 echo "Building Basilisk..."
 cd basilisk/src
 ln -s config.gcc config
-make -k -j $(nproc)
+make -k -j $(nproc) >/dev/null
 make   # incase of any failures from previous command
 
 cd ppr && make && cd ..
@@ -52,14 +52,14 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
 
         if ! which nasm; then # Install asm compiler
             echo "---------------- Asm"
-            cd $HOME/ffmpeg_sources && \
-            wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 && \
-            tar xjvf nasm-2.15.05.tar.bz2 && \
-            cd nasm-2.15.05 && \
-            ./autogen.sh && \
-            PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
-            make -j $(nproc) --silent && \
-            make install
+            cd $HOME/ffmpeg_sources
+            wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 
+            tar xjvf nasm-2.15.05.tar.bz2 
+            cd nasm-2.15.05 
+            ./autogen.sh 
+            PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
+            make -j $(nproc) >/dev/null
+            make install >/dev/null
         fi
 
         if ! which x264; then # Install support for x264 video encoding
@@ -68,8 +68,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
             cd x264 && \
             PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
-            PATH="$HOME/bin:$PATH" make -j $(nproc) --silent && \
-            make install
+            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
+            make install >/dev/null
         fi
 
         if ! which x265; then # Install support for x265 video encoding
@@ -79,7 +79,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             tar xjvf x265.tar.bz2 && \
             cd multicoreware*/build/linux && \
             PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
-            PATH="$HOME/bin:$PATH" make -j $(nproc) --silent && \
+            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
             make install
         fi
 
@@ -99,8 +99,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         --enable-gpl \
         --enable-libx264 \
         --enable-libx265 && \
-        PATH="$HOME/bin:$PATH" make -j $(nproc) --silent && \
-        make install
+        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
+        make install >/dev/null
     fi
 
     cd $HOME
@@ -111,8 +111,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     ./configure --prefix=$HOME/local --enable-osmesa \
                 --with-gallium-drivers=swrast                \
                 --disable-driglx-direct --disable-dri --disable-gbm --disable-egl
-    make -j $(nproc) --silent
-    make install
+    make -j $(nproc) >/dev/null
+    make install >/dev/null
 
     cd $HOME
     echo "---------------- GLU"
@@ -120,8 +120,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     tar xzvf glu-9.0.0.tar.gz
     cd glu-9.0.0
     ./configure --prefix=$HOME/local
-    make -j $(nproc) --silent
-    make install
+    make -j $(nproc) >/dev/null
+    make install >/dev/null
     cd ..
 
     echo "export PATH=$PATH:$HOME/local" >> "$shellrc"
