@@ -130,8 +130,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     make install >/dev/null || (echo 'glu install failed' && exit 1)
     cd ..
 
-    echo "export PATH=$PATH:$HOME/local/include:$HOME/local/lib" >> "$shellrc"
-    export PATH="$PATH:$HOME/local/include:$HOME/local/lib"
+    echo "export CFLAGS=-I$HOME/local/include" >> "$shellrc"
 
     echo "Cleaning up..."
     cd $HOME && rm -rf *.tar.gz ffmpeg_sources
@@ -139,6 +138,7 @@ else
     echo "Graphics build disabled..."
 fi
 
+CFLAGS="$HOME/local/include -std=gnu99"
 cd $HOME/basilisk/src/ppr
 make && cd ../gl 
 make libglutils.a libfb_osmesa.a 
