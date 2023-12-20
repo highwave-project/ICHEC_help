@@ -1,6 +1,7 @@
 JOBS=$(nproc)
 
 if [[ ! -z $TESTING ]]; then
+    source $HOME/.bashrc
     echo "Testing only"
     cd $BASILISK/test
     make -j "$JOBS" >/dev/null || (echo 'testing failed' && exit 1)
@@ -131,6 +132,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     cd ..
 
     echo "export CFLAGS=-I$HOME/local/include" >> "$shellrc"
+    echo "export LDFLAGS=-L$HOME/local/lib" >> "$shellrc"
 
     echo "Cleaning up..."
     cd $HOME && rm -rf *.tar.gz ffmpeg_sources
@@ -138,7 +140,8 @@ else
     echo "Graphics build disabled..."
 fi
 
-CFLAGS="$HOME/local/include -std=gnu99"
+CFLAGS="-I$HOME/local/include -std=gnu99"
+LDFLAGS="-L$HOME/local/lib"
 cd $HOME/basilisk/src/ppr
 make && cd ../gl 
 make libglutils.a libfb_osmesa.a 
