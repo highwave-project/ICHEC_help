@@ -30,7 +30,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt upgrade
-          sudo apt install mesa ffmpeg
 
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
@@ -64,7 +63,7 @@ jobs:
       - name: install deps
         run: |
           sudo apt update && sudo apt upgrade
-          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-dri2-0-dev libdrm
+          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-dri2-0-dev libdrm 
         
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
