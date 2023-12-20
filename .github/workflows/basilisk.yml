@@ -47,10 +47,11 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
-      - name: install testing deps
+      - name: install deps
         run: |
           sudo apt update
-          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit
+          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev
+
         
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
