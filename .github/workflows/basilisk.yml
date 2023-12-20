@@ -50,7 +50,7 @@ jobs:
       - name: install deps
         run: |
           sudo apt update
-          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev
+          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-dri2-0-dev
 
         
       - name: get installer script
