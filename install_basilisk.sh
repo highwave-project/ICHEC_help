@@ -10,7 +10,7 @@ if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
     if which apt; then
         sudo apt update
-        sudo apt install darcs make gawk gfortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit
+        sudo apt install darcs make gawk gfortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit mesa-utils libgl-dev freeglut3 freeglut3-dev
     elif which pacman; then
         sudo pacman -S darcs make gawk gcc-fortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit
     fi
@@ -31,17 +31,17 @@ make   # incase of any failures from previous command
 cd ppr && make && cd ..
 cd gl && make libglutils.a libfb_osmesa.a && cd ..
 
-if [[ -e $HOME/.zshrc ]]; then
-    shellrc=$HOME/.zshrc
-elif [[ -e $HOME/.bashrc ]]; then
-    shellrc=$HOME/.bashrc
+if [[ -e "$HOME/.zshrc" ]]; then
+    shellrc="$HOME/.zshrc"
+elif [[ -e "$HOME/.bashrc" ]]; then
+    shellrc="$HOME/.bashrc"
 fi
 
 if ! grep -q 'BASILISK' $shellrc; then
     echo "Export environment variables to shell config"
-    echo -e '\n#Basilisk Env' >> $shellrc
-    echo "export BASILISK=$PWD" >> $shellrc
-    echo 'export PATH=$PATH:$BASILISK' >> $shellrc  # single quotes to not expand $PATH
+    echo -e '\n#Basilisk Env' >> "$shellrc"
+    echo "export BASILISK=$PWD" >> "$shellrc"
+    echo 'export PATH=$PATH:$BASILISK' >> "$shellrc"  # single quotes to not expand $PATH
 fi
 
 if [[ ! -z $BUILD_GRAPHICS ]]; then
@@ -124,8 +124,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     make install
     cd ..
 
-    echo "export MESA=$HOME/mesa-17.2.4" >> $shellrc
-    echo "export GLU=$HOME/glu-9.0.0" >> $shellrc
+    echo "export PATH=$PATH:$HOME/local" >> "$shellrc"
 
     echo "Cleaning up..."
     cd $HOME && rm -r *.tar.gz ffmpeg_sources
