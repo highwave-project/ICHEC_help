@@ -55,8 +55,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             cd nasm-2.15.05 
             ./autogen.sh >/dev/null
             PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" >/dev/null
-            make -j $(nproc) >/dev/null 
-            make install >/dev/null 
+            make -j $(nproc) >/dev/null || (echo 'nasm build failed' && exit 1)
+            make install >/dev/null || (echo 'nasm install failed' && exit 1)
         fi
 
         if ! which x264; then # Install support for x264 video encoding
@@ -65,8 +65,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             git clone --depth 1 https://code.videolan.org/videolan/x264.git >/dev/null
             cd x264 && \
             PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic >/dev/null
-            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
-            make install >/dev/null
+            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'x264 build failed' && exit 1)
+            make install >/dev/null || (echo 'x264 install failed' && exit 1)
         fi
 
         if ! which x265; then # Install support for x265 video encoding
@@ -76,8 +76,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             tar xjvf x265.tar.bz2 >/dev/null
             cd multicoreware*/build/linux && \
             PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source >/dev/null
-            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
-            make install
+            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'x265 build failed' && exit 1)
+            make install >/dev/null || (echo 'x265 install failed' && exit 1)
         fi
 
         echo "---------------- FFMPEG"
@@ -96,7 +96,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         --enable-gpl \
         --enable-libx264 \
         --enable-libx265 >/dev/null
-        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || echo 'ffmpeg build failed' && exit 1
+        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'ffmpeg build failed' && exit 1)
         make install >/dev/null || (echo 'ffmpeg install failed' && exit 1)
     fi
 
