@@ -21,10 +21,17 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install Mako
+      
       - name: update and upgrade
         run: |
           sudo apt update
           sudo apt upgrade
+          sudo apt install mesa ffmpeg
 
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
@@ -50,11 +57,16 @@ jobs:
       
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install Mako
 
       - name: install deps
         run: |
           sudo apt update && sudo apt upgrade
-          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-dri2-0-dev
+          sudo apt install gfortran xcb valgrind graphviz valgrind gifsicle pstoedit libxcb-shape0-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-dri2-0-dev libdrm
         
       - name: get installer script
         run: wget https://raw.githubusercontent.com/highwave-project/ICHEC_help/main/install_basilisk.sh
