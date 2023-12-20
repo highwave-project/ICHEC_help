@@ -333,6 +333,8 @@ chmod a+x install_basilisk.sh
 ./install_basilisk.sh
 ```
 
+- NOTE: Depending on the cluster you are installing on, you may need to `module load` some dependencies such as the gcc compiler and cmake. If possible you can also load the graphics libraries such as ffmpeg, osmesa and glu.
+
 <details>
 <summary>Example of setting flags</summary>
 
