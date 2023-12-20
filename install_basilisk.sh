@@ -56,8 +56,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 
             tar xjvf nasm-2.15.05.tar.bz2 
             cd nasm-2.15.05 
-            ./autogen.sh 
-            PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
+            ./autogen.sh >/dev/null
+            PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" >/dev/null
             make -j $(nproc) >/dev/null
             make install >/dev/null
         fi
@@ -67,7 +67,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             cd $HOME/ffmpeg_sources && \
             git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
             cd x264 && \
-            PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
+            PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic >/dev/null
             PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
             make install >/dev/null
         fi
@@ -78,7 +78,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
             tar xjvf x265.tar.bz2 && \
             cd multicoreware*/build/linux && \
-            PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
+            PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source >/dev/null
             PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
             make install
         fi
@@ -98,7 +98,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         --bindir="$HOME/bin" \
         --enable-gpl \
         --enable-libx264 \
-        --enable-libx265 && \
+        --enable-libx265 >/dev/null
         PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
         make install >/dev/null
     fi
@@ -110,7 +110,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     cd mesa-17.2.4
     ./configure --prefix=$HOME/local --enable-osmesa \
                 --with-gallium-drivers=swrast                \
-                --disable-driglx-direct --disable-dri --disable-gbm --disable-egl
+                --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
     make -j $(nproc) >/dev/null
     make install >/dev/null
 
@@ -119,7 +119,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz
     tar xzvf glu-9.0.0.tar.gz
     cd glu-9.0.0
-    ./configure --prefix=$HOME/local
+    ./configure --prefix=$HOME/local >/dev/null
     make -j $(nproc) >/dev/null
     make install >/dev/null
     cd ..
