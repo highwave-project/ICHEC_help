@@ -1,7 +1,9 @@
+JOBS=$(nproc)
+
 if [[ ! -z $TESTING ]]; then
     echo "Testing only"
     cd $BASILISK/test
-    make -j $(nproc) >/dev/null || (echo 'testing failed' && exit 1)
+    make -j "$JOBS" >/dev/null || (echo 'testing failed' && exit 1)
     exit 0
 fi
 
@@ -32,7 +34,7 @@ fi
 echo "Building Basilisk..."
 cd basilisk/src
 ln -s config.gcc config
-make -k -j $(nproc) >/dev/null
+make -k -j "$JOBS" >/dev/null
 make  # incase of any failures from previous command
 
 if [[ -e "$HOME/.zshrc" ]]; then
@@ -62,7 +64,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             cd nasm-2.15.05 
             ./autogen.sh >/dev/null
             PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" >/dev/null
-            make -j $(nproc) >/dev/null || (echo 'nasm build failed' && exit 1)
+            make -j "$JOBS" >/dev/null || (echo 'nasm build failed' && exit 1)
             make install >/dev/null || (echo 'nasm install failed' && exit 1)
         fi
 
@@ -72,7 +74,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             git clone --depth 1 https://code.videolan.org/videolan/x264.git >/dev/null
             cd x264 && \
             PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic >/dev/null
-            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'x264 build failed' && exit 1)
+            PATH="$HOME/bin:$PATH" make -j "$JOBS" >/dev/null || (echo 'x264 build failed' && exit 1)
             make install >/dev/null || (echo 'x264 install failed' && exit 1)
         fi
 
@@ -83,7 +85,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             tar xjvf x265.tar.bz2 >/dev/null
             cd multicoreware*/build/linux && \
             PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source >/dev/null
-            PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'x265 build failed' && exit 1)
+            PATH="$HOME/bin:$PATH" make -j "$JOBS" >/dev/null || (echo 'x265 build failed' && exit 1)
             make install >/dev/null || (echo 'x265 install failed' && exit 1)
         fi
 
@@ -103,7 +105,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         --enable-gpl \
         --enable-libx264 \
         --enable-libx265 >/dev/null
-        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || (echo 'ffmpeg build failed' && exit 1)
+        PATH="$HOME/bin:$PATH" make -j "$JOBS" >/dev/null || (echo 'ffmpeg build failed' && exit 1)
         make install >/dev/null || (echo 'ffmpeg install failed' && exit 1)
     fi
 
@@ -115,7 +117,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     ./configure --prefix=$HOME/local --enable-osmesa \
                 --with-gallium-drivers=swrast                \
                 --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
-    make -j $(nproc) >/dev/null || (echo 'osmesa build failed' && exit 1)
+    make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
     make install >/dev/null || (echo 'osmesa install failed' && exit 1)
 
     cd $HOME
@@ -124,11 +126,11 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     tar xzvf glu-9.0.0.tar.gz >/dev/null
     cd glu-9.0.0
     ./configure --prefix=$HOME/local >/dev/null
-    make -j $(nproc) >/dev/null || (echo 'glu build failed' && exit 1)
+    make -j "$JOBS" >/dev/null || (echo 'glu build failed' && exit 1)
     make install >/dev/null || (echo 'glu install failed' && exit 1)
     cd ..
 
-    echo "export PATH=$PATH:$HOME/local" >> "$shellrc"
+    echo "export PATH=$PATH:$HOME/local/include:$HOME/local/lib" >> "$shellrc"
 
     echo "Cleaning up..."
     cd $HOME && rm -r *.tar.gz ffmpeg_sources
