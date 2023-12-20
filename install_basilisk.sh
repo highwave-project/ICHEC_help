@@ -1,7 +1,7 @@
 if [[ ! -z $TESTING ]]; then
     echo "Testing only"
     cd $BASILISK/test
-    make -j $(nproc) >/dev/null
+    make -j $(nproc) >/dev/null || echo 'testing failed' && exit 1
     exit 0
 fi
 
@@ -55,8 +55,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
             cd nasm-2.15.05 
             ./autogen.sh >/dev/null
             PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" >/dev/null
-            make -j $(nproc) >/dev/null
-            make install >/dev/null
+            make -j $(nproc) >/dev/null 
+            make install >/dev/null 
         fi
 
         if ! which x264; then # Install support for x264 video encoding
@@ -96,8 +96,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         --enable-gpl \
         --enable-libx264 \
         --enable-libx265 >/dev/null
-        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null
-        make install >/dev/null
+        PATH="$HOME/bin:$PATH" make -j $(nproc) >/dev/null || echo 'ffmpeg build failed' && exit 1
+        make install >/dev/null || echo 'ffmpeg install failed' && exit 1
     fi
 
     cd $HOME
@@ -108,8 +108,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     ./configure --prefix=$HOME/local --enable-osmesa \
                 --with-gallium-drivers=swrast                \
                 --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
-    make -j $(nproc) >/dev/null
-    make install >/dev/null
+    make -j $(nproc) >/dev/null || echo 'osmesa build failed' && exit 1
+    make install >/dev/null || echo 'osmesa install failed' && exit 1
 
     cd $HOME
     echo "---------------- GLU"
@@ -117,8 +117,8 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     tar xzvf glu-9.0.0.tar.gz >/dev/null
     cd glu-9.0.0
     ./configure --prefix=$HOME/local >/dev/null
-    make -j $(nproc) >/dev/null
-    make install >/dev/null
+    make -j $(nproc) >/dev/null || echo 'glu build failed' && exit 1
+    make install >/dev/null || echo 'glu install failed' && exit 1
     cd ..
 
     echo "export PATH=$PATH:$HOME/local" >> "$shellrc"
@@ -131,6 +131,7 @@ fi
 
 cd $HOME/basilisk/src/ppr
 make && cd ../gl 
-make libglutils.a libfb_osmesa.a && cd ..
+make libglutils.a libfb_osmesa.a 
+
 
 echo "Installation finished..."
