@@ -28,13 +28,13 @@ ln -s config.gcc config
 make -k -j $(nproc)
 make   # incase of any failures from previous command
 
-export BASILISK=$PWD
-export PATH=$PATH:$BASILISK
+cd ppr && make && cd ..
+cd gl && make libglutils.a libfb_osmesa.a && cd ..
 
-if [[ -e ~/.zshrc ]]; then
-    shellrc=~/.zshrc
-elif [[ -e ~/.bashrc ]]; then
-    shellrc=~/.bashrc
+if [[ -e $HOME/.zshrc ]]; then
+    shellrc=$HOME/.zshrc
+elif [[ -e $HOME/.bashrc ]]; then
+    shellrc=$HOME/.bashrc
 fi
 
 if ! grep -q 'BASILISK' $shellrc; then
@@ -48,11 +48,11 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     echo "Graphics building enabled..."
 
     if ! which ffmpeg; then
-        mkdir ~/ffmpeg_sources
+        mkdir $HOME/ffmpeg_sources
 
         if ! which nasm; then # Install asm compiler
             echo "---------------- Asm"
-            cd ~/ffmpeg_sources && \
+            cd $HOME/ffmpeg_sources && \
             wget https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.bz2 && \
             tar xjvf nasm-2.15.05.tar.bz2 && \
             cd nasm-2.15.05 && \
@@ -64,7 +64,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
 
         if ! which x264; then # Install support for x264 video encoding
             echo "---------------- x264"
-            cd ~/ffmpeg_sources && \
+            cd $HOME/ffmpeg_sources && \
             git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
             cd x264 && \
             PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
@@ -74,7 +74,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
 
         if ! which x265; then # Install support for x265 video encoding
             echo "---------------- x265"
-            cd ~/ffmpeg_sources && \
+            cd $HOME/ffmpeg_sources && \
             wget -O x265.tar.bz2 https://bitbucket.org/multicoreware/x265_git/get/master.tar.bz2 && \
             tar xjvf x265.tar.bz2 && \
             cd multicoreware*/build/linux && \
@@ -84,7 +84,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         fi
 
         echo "---------------- FFMPEG"
-        cd ~/ffmpeg_sources && \
+        cd $HOME/ffmpeg_sources && \
         wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
         tar xjvf ffmpeg-snapshot.tar.bz2 && \
         cd ffmpeg && \
@@ -103,7 +103,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         make install
     fi
 
-    cd ~
+    cd $HOME
     echo "---------------- OSMESA"
     wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz
     tar xzvf mesa-17.2.4.tar.gz
@@ -114,7 +114,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     make -j $(nproc)
     make install
 
-    cd ~
+    cd $HOME
     echo "---------------- GLU"
     wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz
     tar xzvf glu-9.0.0.tar.gz
@@ -124,16 +124,13 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     make install
     cd ..
 
-    echo "export MESA=~/mesa-17.2.4" >> $shellrc
-    echo "export GLU=~/glu-9.0.0" >> $shellrc
+    echo "export MESA=$HOME/mesa-17.2.4" >> $shellrc
+    echo "export GLU=$HOME/glu-9.0.0" >> $shellrc
 
     echo "Cleaning up..."
-    cd ~ && rm -r *.tar.gz ffmpeg_sources
+    cd $HOME && rm -r *.tar.gz ffmpeg_sources
 else
     echo "Graphics build disabled..."
 fi
-
-cd $BASILISK/ppr && make
-cd $BASILISK/gl && make libglutils.a libfb_osmesa.a
 
 echo "Installation finished..."
