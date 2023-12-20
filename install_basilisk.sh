@@ -1,3 +1,6 @@
+# exit on error codes so workflow fails
+set -e
+
 if [[ ! -z $TESTING ]]; then
     echo "Testing only"
     cd $BASILISK/test
