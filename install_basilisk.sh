@@ -1,7 +1,7 @@
 if [[ ! -z $TESTING ]]; then
     echo "Testing only"
     cd $BASILISK/test
-    make -k -j $(nproc)
+    make -j $(nproc) >/dev/null
     exit 0
 fi
 
