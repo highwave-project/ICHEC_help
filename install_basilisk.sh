@@ -5,6 +5,8 @@ if [[ ! -z $TESTING ]]; then
     exit 0
 fi
 
+# clean up old folders
+rm -rf basilisk* ffmpeg* bin* "local*"
 # Install packages
 if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
@@ -22,11 +24,16 @@ else
     tar xzf basilisk.tar.gz >/dev/null
 fi
 
+# if on a cluster with module, check if the following can be loaded
+if which module; then
+    module load GCC CMake Mesa Mako intel gcc
+fi
+
 echo "Building Basilisk..."
 cd basilisk/src
 ln -s config.gcc config
 make -k -j $(nproc) >/dev/null
-make >/dev/null  # incase of any failures from previous command
+make  # incase of any failures from previous command
 
 if [[ -e "$HOME/.zshrc" ]]; then
     shellrc="$HOME/.zshrc"
