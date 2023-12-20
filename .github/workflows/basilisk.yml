@@ -15,6 +15,9 @@ jobs:
   local:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    env:
+      HOME : ${{ github.workspace }}
+      LOCAL_INSTALL : yes
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -26,20 +29,21 @@ jobs:
         run: chmod a+x install_basilisk.sh
   
       - name: run install script
-        env:
-          LOCAL_INSTALL : yes
         run: ./install_basilisk.sh
 
       - name: testing
         env: 
           TESTING : yes
-          BASILISK: ~/basilisk/src
+          BASILISK: ${{ github.workspace }}/basilisk/src
         run: ./install_basilisk.sh
 
   graphics:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-  
+    env:
+      HOME : ${{ github.workspace }}
+      BUILD_GRAPHICS : yes
+      
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
@@ -55,12 +59,10 @@ jobs:
         run: chmod a+x install_basilisk.sh
   
       - name: run install script
-        env: 
-          BUILD_GRAPHICS : yes
         run: ./install_basilisk.sh
 
       - name: testing
         env:
           TESTING : yes
-          BASILISK: ~/basilisk/src
+          BASILISK: ${{ github.workspace }}/basilisk/src
         run: ./install_basilisk.sh
