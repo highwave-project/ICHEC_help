@@ -8,13 +8,13 @@ if [[ ! -z $TESTING ]]; then
 fi
 
 # clean up old folders
-rm -rf basilisk* ffmpeg* bin* "local*"
+rm -rf basilisk* ffmpeg* bin* "local*" mesa* glu* 
 # Install packages
 if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
     if which apt; then
         sudo apt update >/dev/null
-        sudo apt install darcs make gawk gfortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit mesa-utils libgl-dev freeglut3 freeglut3-dev >/dev/null
+        sudo apt install darcs make gawk gfortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit mesa-utils libgl-dev freeglut3 freeglut3-dev libosmesa6-dev >/dev/null
     elif which pacman; then
         sudo pacman -S darcs make gawk gcc-fortran gnuplot imagemagick ffmpeg graphviz valgrind gifsicle pstoedit
     fi
@@ -131,9 +131,10 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     cd ..
 
     echo "export PATH=$PATH:$HOME/local/include:$HOME/local/lib" >> "$shellrc"
+    export PATH="$PATH:$HOME/local/include:$HOME/local/lib"
 
     echo "Cleaning up..."
-    cd $HOME && rm -r *.tar.gz ffmpeg_sources
+    cd $HOME && rm -rf *.tar.gz ffmpeg_sources
 else
     echo "Graphics build disabled..."
 fi
@@ -141,6 +142,5 @@ fi
 cd $HOME/basilisk/src/ppr
 make && cd ../gl 
 make libglutils.a libfb_osmesa.a 
-
 
 echo "Installation finished..."
