@@ -399,3 +399,75 @@ mpicc -Wall -std=c99 -O2 _example.c -o example -L$BASILISK/gl -L$MESA/lib -L$GLU
 ## Other SLURM Commands
 
 See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation/slurm-commands) and the [SLURM documentation](https://slurm.schedmd.com/documentation.html)
+
+# Meluxina
+
+This section specific commands for Meluxina HPC
+
+## Build/Interactive jobs
+
+To build anything in Meluxina you need to allocated an iteractive node. This can be done with salloc:
+```bash
+salloc -A <project_number> -p cpu --qos defualt -N 1 -t 2-0:00:0 srun --mpi=none --pty bash -l
+```
+
+The above allocate a cpu interactive job and launches bash. It is also adviced to disable MPI via `--mpi=none` for building. The `-l` option is important as it launches bash as a login shell (if not the module command won't work).
+
+Different QOS(`--qos`) can be specified like `test` if needed (`test` has higher priority but max time is 30 min).
+
+## Batch jobs
+
+The job submition is almost the same, however there are some things that are importand. In the shebang the `-l` option is important for the module command to work. Also, the number of cores are 64 in Meluxina. 
+
+### Example MPI
+```bash
+#!/bin/bash -l
+#SBATCH --nodes=5                          # number of nodes
+#SBATCH --ntasks=640                       # number of tasks
+#SBATCH --qos=default                      # SLURM qos
+#SBATCH --ntasks-per-node=128              # number of tasks per node
+#SBATCH --cpus-per-task=1                  # number of cores per task
+#SBATCH --time=00:15:00                    # time (HH:MM:SS)
+#SBATCH --partition=cpu                    # partition
+#SBATCH --account=<myproj_id>                # project account
+
+srun ./hello_world_mpi
+```
+
+### Example OpenMP
+
+```bash
+#!/bin/bash -l
+#SBATCH --nodes=5                          # number of nodes
+#SBATCH --ntasks=160                       # number of tasks
+#SBATCH --ntasks-per-node=32               # number of tasks per node
+#SBATCH --cpus-per-task=4                  # number of cores (OpenMP thread) per task
+#SBATCH --time=00:15:00                    # time (HH:MM:SS)
+#SBATCH --partition=cpu                    # partition
+#SBATCH --qos=default                      # SLURM qos
+#SBATCH --account=<myproj_id>                # project account
+
+
+srun ./hello_world_mpiopenmp
+```
+
+### Example GPU job
+```bash
+#!/bin/bash -l
+#SBATCH --nodes=1                          # number of nodes
+#SBATCH --ntasks=8                         # number of tasks
+#SBATCH --ntasks-per-node=4                # number of tasks per node
+#SBATCH --gpus-per-task=1                  # number of gpu per task
+#SBATCH --cpus-per-task=1                  # number of cores per task
+#SBATCH --time=00:15:00                    # time (HH:MM:SS)
+#SBATCH --partition=gpu                    # partition
+#SBATCH --qos=default                      # SLURM qos
+#SBATCH --account=<myproj_id>                # project account
+
+srun ./hello_world_gpu
+```
+
+
+## Partitions and QOS
+
+Information about the partitions and the QOS ca be found the [Meluxina quick start](https://docs.lxp.lu/first-steps/quick_start/).
