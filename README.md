@@ -402,7 +402,7 @@ See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation
 
 # Meluxina
 
-This section specific commands for Meluxina HPC
+Information about Meluxina HPC.
 
 ## Build/Interactive jobs
 
