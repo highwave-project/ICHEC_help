@@ -404,6 +404,10 @@ See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation
 
 Information about Meluxina HPC.
 
+## Project ID and Resources
+
+The command `myquota` can be used to monitor the resources (CPU/GPU hours, storage) as well as the user and project directories.
+
 ## Build/Interactive jobs
 
 To build anything in Meluxina you need to allocated an iteractive node. This can be done with salloc:
