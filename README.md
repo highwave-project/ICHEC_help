@@ -44,6 +44,37 @@ ssh <username>@kay.ichec.ie
 
 For more details see [ICHEC SSH Keys](https://www.ichec.ie/academic/national-hpc/documentation/tutorials/setting-ssh-keys)
 
+To simplify the login procedure you can define a shorthand alias for the connection parameters (user, host, port). You may add the following declaration to the SSH user configuration file on your system (`~/.ssh/config`, create it if it does not already exist):
+
+```bash
+Host ichec
+   Hostname login.lxp.lu
+   User '<your-user-ID>'
+```
+
+You will then be able to connect to MeluXina simply with:
+
+```bash
+ssh ichec
+```
+
+X11 forwarding is allowed and necessary to display editor windows (gvim, emacs, nedit, etc.) or similar on your desktop. To enable X11 forwarding, log in with the ssh -X option enabled
+
+```bash
+ssh -X ichec
+```
+or add the following line in your `~/.ssh/config` ichec entry:
+```bash
+Host ichec
+   ...
+   ForwardX11 yes
+```
+the you can simply use
+
+```bash
+ssh ichec
+```
+
 ---
 
 ## Filesystem and Copying
@@ -73,6 +104,8 @@ It is also easy to use rsync where you may want to include certain files and exc
 ```bash
 rsync -r <username>@kay.ichec.ie:<remote_path> <local_path> --include file_pattern* --exclude unwanted_files*
 ```
+
+**Note**: If an alias is set in `~/.ssh/config` for ichec (see section [Logging In](#logging-in)) you can replace `<username>@kay.ichec.ie:` with just `ichec:` in the above commands.
 
 ---
 
@@ -404,13 +437,19 @@ mpicc -Wall -std=c99 -O2 _example.c -o example -L$BASILISK/gl -L$MESA/lib -L$GLU
 
 See the [ICHEC website](https://www.ichec.ie/academic/national-hpc/documentation/slurm-commands) and the [SLURM documentation](https://slurm.schedmd.com/documentation.html)
 
+---
+
 # Meluxina
 
 Information about Meluxina HPC.
 
+---
+
 ## Project ID and Resources
 
 The command `myquota` can be used to monitor the resources (CPU/GPU hours, storage) as well as the user and project directories.
+
+---
 
 ## Build/Interactive jobs
 
@@ -422,6 +461,8 @@ salloc -A <project_number> -p cpu --qos default -N 1 -t 2-0:00:0 srun --mpi=none
 The above allocate a cpu interactive job and launches bash. It is also adviced to disable MPI via `--mpi=none` for building. The `-l` option is important as it launches bash as a login shell (if not the module command won't work).
 
 Different QOS(`--qos`) can be specified like `test` if needed (`test` has higher priority but max time is 30 min).
+
+---
 
 ## Batch jobs
 
@@ -475,6 +516,7 @@ srun ./hello_world_mpiopenmp
 srun ./hello_world_gpu
 ```
 
+---
 
 ## Partitions and QOS
 
