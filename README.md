@@ -14,6 +14,10 @@ A short but useful quick-start guide to ICHEC. This is written for Linux users a
 - [Using Aliases](#using-aliases)
 - [Basilisk](#basilisk)
 - [Other SLURM Commands](#other-slurm-commands)
+- [Meluxina](#meluxina)
+   - [Project ID and Resources](#project-id-and-resources)
+   - [Build/Interactive jobs](#buildinteractive-jobs)
+   - [Batch jobs](#batch-jobs)
 
 ---
 
@@ -412,7 +416,7 @@ The command `myquota` can be used to monitor the resources (CPU/GPU hours, stora
 
 To build anything in Meluxina you need to allocated an iteractive node. This can be done with salloc:
 ```bash
-salloc -A <project_number> -p cpu --qos defualt -N 1 -t 2-0:00:0 srun --mpi=none --pty bash -l
+salloc -A <project_number> -p cpu --qos default -N 1 -t 2-0:00:0 srun --mpi=none --pty bash -l
 ```
 
 The above allocate a cpu interactive job and launches bash. It is also adviced to disable MPI via `--mpi=none` for building. The `-l` option is important as it launches bash as a login shell (if not the module command won't work).
