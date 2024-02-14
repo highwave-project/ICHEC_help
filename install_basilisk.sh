@@ -126,16 +126,18 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         make install >/dev/null || { echo 'ffmpeg install failed' && exit 1; }
     fi
 
-    cd $DEPS_PREFIX
-    echo "---------------- OSMESA"
-    wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
-    tar xzvf mesa-17.2.4.tar.gz >/dev/null
-    cd mesa-17.2.4
-    ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
-                --with-gallium-drivers=swrast                \
-                --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
-    make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
-    make install >/dev/null || (echo 'osmesa install failed' && exit 1)
+    if ! /sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) | grep libOSMesa.so &> /dev/null; then
+        cd $DEPS_PREFIX
+        echo "---------------- OSMESA"
+        wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
+        tar xzvf mesa-17.2.4.tar.gz >/dev/null
+        cd mesa-17.2.4
+        ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
+                    --with-gallium-drivers=swrast                \
+                    --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
+        make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
+        make install >/dev/null || (echo 'osmesa install failed' && exit 1)
+    fi
 
     # I guess always install GLU
     cd $DEPS_PREFIX
@@ -143,9 +145,10 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
     wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz >/dev/null
     tar xzvf glu-9.0.0.tar.gz >/dev/null
     cd glu-9.0.0
-    export CFLAGS="-I$DEPS_PREFIX/include"
-    export LDFLAGS="-L$DEPS_PREFIX/lib"
-    ./configure --prefix=$DEPS_PREFIX >/dev/null
+    CFLAGS="-I$DEPS_PREFIX/include"
+    CPPFLAGS="-I$DEPS_PREFIX/include"
+    LDFLAGS="-L$DEPS_PREFIX/lib"
+    ./configure --prefix=$DEPS_PREFIX --enable-osmesa >/dev/null
     make -j "$JOBS" >/dev/null || { echo 'glu build failed' && exit 1; }
     make install >/dev/null || { echo 'glu install failed' && exit 1; }
     cd ..
@@ -157,7 +160,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         case $yn in
             [Yy] | [Yy]es )
                 echo "export PATH=\$PATH:$DEPS_PREFIX/bin" >> "$shellrc"
-                echo "Done"
+                echo Done
                 break;;
             [Nn] | [Nn]o ) break;;
             * ) echo "Please answer y or n.";;
@@ -169,7 +172,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         case $yn in
             [Yy] | [Yy]es )
                 echo "export LIBRARY_PATH=$DEPS_PREFIX/lib\${LIBRARY_PATH:+:\$LIBRARY_PATH}" >> "$shellrc"
-                echo "Done"
+                echo Done
                 break;;
             [Nn] | [Nn]o ) break;;
             * ) echo "Please answer y or n.";;
@@ -181,6 +184,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         case $yn in
             [Yy] | [Yy]es )
                 echo "export LD_LIBRARY_PATH=$DEPS_PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}" >> "$shellrc"
+                echo Done
                 break;;
             [Nn] | [Nn]o ) break;;
             * ) echo "Please answer y or n.";;
@@ -192,7 +196,7 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         case $yn in
             [Yy] | [Yy]es )
                 echo "export C_INCLUDE_PATH=$DEPS_PREFIX/lib\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}" >> "$shellrc"
-                echo "Done"
+                echo Done
                 break;;
             [Nn] | [Nn]o ) break;;
             * ) echo "Please answer y or n.";;
@@ -207,7 +211,7 @@ fi
 
 CFLAGS="-I$DEPS_PREFIX/include -std=gnu99"
 LDFLAGS="-L$DEPS_PREFIX/lib"
-cd $HOME/basilisk/src/ppr
+cd $INSTALL_PREFIX/basilisk/src/ppr
 make && cd ../gl 
 make libglutils.a libfb_osmesa.a || { echo "failed building src/gl" && exit 1; }
 
