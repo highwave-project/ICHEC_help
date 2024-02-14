@@ -29,7 +29,7 @@ fi
 
 # if on a cluster with module, check if the following can be loaded
 if which module; then
-    module load GCC CMake Mesa Mako intel gcc
+    module load GCC CMake Mesa Mako intel FFmpeg
 fi
 
 echo "Building Basilisk..."
