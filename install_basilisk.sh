@@ -126,18 +126,16 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         make install >/dev/null || { echo 'ffmpeg install failed' && exit 1; }
     fi
 
-    if ! /sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH)| grep libOSMesa.so; then
-        cd $DEPS_PREFIX
-        echo "---------------- OSMESA"
-        wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
-        tar xzvf mesa-17.2.4.tar.gz >/dev/null
-        cd mesa-17.2.4
-        ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
-                    --with-gallium-drivers=swrast                \
-                    --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
-        make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
-        make install >/dev/null || (echo 'osmesa install failed' && exit 1)
-    fi
+    cd $DEPS_PREFIX
+    echo "---------------- OSMESA"
+    wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
+    tar xzvf mesa-17.2.4.tar.gz >/dev/null
+    cd mesa-17.2.4
+    ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
+                --with-gallium-drivers=swrast                \
+                --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
+    make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
+    make install >/dev/null || (echo 'osmesa install failed' && exit 1)
 
     # I guess always install GLU
     cd $DEPS_PREFIX
