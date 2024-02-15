@@ -190,11 +190,11 @@ Submit a job array with index values between 1 and 7 with a step size of 2 (i.e.
 
 Each job has the following environment variables set:
 
-1. **`SLURM_ARRAY_JOB_ID`**: The first job ID
-1. **`SLURM_ARRAY_TASK_ID`**: The job array index value
-1. **`SLURM_ARRAY_TASK_COUNT`**: The number of tasks in the job array
-1. **`SLURM_ARRAY_TASK_MAX`**: The highest job array index value
-1. **`SLURM_ARRAY_TASK_MIN`**: The lowest job array index value
+1. `SLURM_ARRAY_JOB_ID`: The first job ID
+1. `SLURM_ARRAY_TASK_ID`: The job array index value
+1. `SLURM_ARRAY_TASK_COUNT`: The number of tasks in the job array
+1. `SLURM_ARRAY_TASK_MAX`: The highest job array index value
+1. `SLURM_ARRAY_TASK_MIN`: The lowest job array index value
 
 For example the following job submission will generate 3 jobs:
 
@@ -362,6 +362,9 @@ To ensure issue free compilation of your basilisk code it is recommended to use 
     - `export LOCAL_INSTALL=yes`: you have sudo access
     - `export BUILD_GRAPHICS=yes`: you require ffmpeg compiled, or OSMesa or GLU (This may take a long time...)
     - You likely only require one of the above, as if you have sudo access you can simply install the graphics binaries
+    - `export INSTAL_PREFIX=/basilisk/install/dir`: This is the directory where basilisk will be installed. If not set the default is your home directory, ie `$HOME`.
+    - `export DEPS_PREFIX=/dependencies/install/dir/`: This is the directory where the dependencies (ffmpeg/OSMesa/GLU) will be installed. If not set the default is `$HOME/local`
+   - `export NO_MOD_PATH=yes`: If this variable is **NOT** specified, at the end the scripts adds basilisk (and dependencies) to PATH. Additionally, the `lib` and `include` directories of the dependencies are added to the c include and linker paths. This is recommended so that you don't need to pass the flags `-I$HOME/local/include` and `-L$HOME/local/lib` every time you compile a basilisk file. (Only add them if those directories are not already in the respective paths)
 
 ```bash
 cd ~
