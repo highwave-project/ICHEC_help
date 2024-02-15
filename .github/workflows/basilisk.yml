@@ -44,7 +44,7 @@ jobs:
         env: 
           TESTING : yes
           BASILISK: ${{ github.workspace }}/basilisk/src
-        run: echo "y\ny\ny\ny\ny" | ./install_basilisk.sh
+        run: ./install_basilisk.sh
 
   graphics:
     # The type of runner that the job will run on
@@ -72,7 +72,7 @@ jobs:
         run: chmod a+x install_basilisk.sh
   
       - name: run install script
-        run: ./install_basilisk.sh
+        run: echo "y\ny\ny\ny\ny" | ./install_basilisk.sh
 
       - name: testing
         env:
