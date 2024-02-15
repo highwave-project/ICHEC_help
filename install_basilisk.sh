@@ -14,6 +14,13 @@ fi
 
 # clean up old folders
 rm -rf $INSTALL_PREFIX/basilisk* $DEPS_PREFIX/ffmpeg* $DEPS_PREFIX/mesa* $DEPS_PREFIX/glu*
+if [[ ! -d $DEPS_PREFIX ]]; then
+    mkdir $DEPS_PREFIX
+fi
+if [[ ! -d $INSTALL_PREFIX ]]; then
+    mkdir $INSTALL_PREFIX
+fi
+
 # Install packages
 if [[ ! -z $LOCAL_INSTALL ]]; then
     echo "Local installation with access to sudo for installing"
@@ -47,24 +54,6 @@ if [[ -e "$HOME/.zshrc" ]]; then
     shellrc="$HOME/.zshrc"
 else
     shellrc="$HOME/.bashrc"
-fi
-
-if ! grep -q 'BASILISK' $shellrc; then
-    # Ask user to modify PATH
-    while true; do
-        msg="Add basilisk to PATH in $shellrc (y/n)? "
-        read -p "$msg" yn
-        case $yn in
-            [Yy] | [Yy]es )
-                echo "Export environment variables to shell config"
-                echo -e '\n#Basilisk Env' >> "$shellrc"
-                echo "export BASILISK=$PWD" >> "$shellrc"
-                echo 'export PATH=$PATH:$BASILISK' >> "$shellrc"  # single quotes to not expand $PATH
-                break;;
-            [Nn] | [Nn]o ) break;;
-            * ) echo "Please answer y or n.";;
-        esac
-    done
 fi
 
 if [[ ! -z $BUILD_GRAPHICS ]]; then
@@ -126,93 +115,108 @@ if [[ ! -z $BUILD_GRAPHICS ]]; then
         make install >/dev/null || { echo 'ffmpeg install failed' && exit 1; }
     fi
 
-    if ! /sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) | grep libOSMesa.so &> /dev/null; then
-        cd $DEPS_PREFIX
-        echo "---------------- OSMESA"
-        wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
-        tar xzvf mesa-17.2.4.tar.gz >/dev/null
-        cd mesa-17.2.4
-        ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
-                    --with-gallium-drivers=swrast                \
-                    --disable-driglx-direct --disable-dri --disable-gbm --disable-egl >/dev/null
-        make -j "$JOBS" >/dev/null || (echo 'osmesa build failed' && exit 1)
-        make install >/dev/null || (echo 'osmesa install failed' && exit 1)
-    fi
+    cd $DEPS_PREFIX
+    export CFLAGS="-fcommon"    # https://gitlab.freedesktop.org/mesa/mesa/-/issues/3298
+    echo "---------------- OSMESA"
+    wget http://basilisk.fr/src/gl/mesa-17.2.4.tar.gz >/dev/null
+    tar xzvf mesa-17.2.4.tar.gz >/dev/null
+    cd mesa-17.2.4
+    ./configure --prefix=$DEPS_PREFIX --enable-osmesa \
+                --with-gallium-drivers=swrast                \
+                --disable-driglx-direct --disable-dri --disable-gbm --disable-egl
+    make -j "$JOBS" || { echo 'osmesa build failed' && exit 1; }
+    make install || { echo 'osmesa install failed' && exit 1; }
 
-    # I guess always install GLU
     cd $DEPS_PREFIX
     echo "---------------- GLU"
     wget http://basilisk.fr/src/gl/glu-9.0.0.tar.gz >/dev/null
     tar xzvf glu-9.0.0.tar.gz >/dev/null
     cd glu-9.0.0
-    CFLAGS="-I$DEPS_PREFIX/include"
-    CPPFLAGS="-I$DEPS_PREFIX/include"
-    LDFLAGS="-L$DEPS_PREFIX/lib"
-    ./configure --prefix=$DEPS_PREFIX --enable-osmesa >/dev/null
-    make -j "$JOBS" >/dev/null || { echo 'glu build failed' && exit 1; }
-    make install >/dev/null || { echo 'glu install failed' && exit 1; }
+    export CFLAGS="-I$DEPS_PREFIX/include"
+    export CPPFLAGS="-I$DEPS_PREFIX/include"
+    export LDFLAGS="-L$DEPS_PREFIX/lib"
+    ./configure --prefix=$DEPS_PREFIX --enable-osmesa
+    make -j "$JOBS" || { echo 'glu build failed' && exit 1; }
+    make install || { echo 'glu install failed' && exit 1; }
     cd ..
 
-    # Ask user to add dependencies to different paths.
-    while true; do
-        msg="Add $DEPS_PREFIX/bin to PATH in $shellrc (y/n)? "
-        read -p "$msg" yn
-        case $yn in
-            [Yy] | [Yy]es )
-                echo "export PATH=\$PATH:$DEPS_PREFIX/bin" >> "$shellrc"
-                echo Done
-                break;;
-            [Nn] | [Nn]o ) break;;
-            * ) echo "Please answer y or n.";;
-        esac
-    done
-    while true; do
-        msg="Add $DEPS_PREFIX/lib to LIBRARY_PATH in $shellrc (y/n)? "
-        read -p "$msg" yn
-        case $yn in
-            [Yy] | [Yy]es )
-                echo "export LIBRARY_PATH=$DEPS_PREFIX/lib\${LIBRARY_PATH:+:\$LIBRARY_PATH}" >> "$shellrc"
-                echo Done
-                break;;
-            [Nn] | [Nn]o ) break;;
-            * ) echo "Please answer y or n.";;
-        esac
-    done
-    while true; do
-        msg="Add $DEPS_PREFIX/lib to LD_LIBRARY_PATH in $shellrc (y/n)? "
-        read -p "$msg" yn
-        case $yn in
-            [Yy] | [Yy]es )
-                echo "export LD_LIBRARY_PATH=$DEPS_PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}" >> "$shellrc"
-                echo Done
-                break;;
-            [Nn] | [Nn]o ) break;;
-            * ) echo "Please answer y or n.";;
-        esac
-    done
-    while true; do
-        msg="Add $DEPS_PREFIX/include to C_INCLUDE_PATH in $shellrc (y/n)? "
-        read -p "$msg" yn
-        case $yn in
-            [Yy] | [Yy]es )
-                echo "export C_INCLUDE_PATH=$DEPS_PREFIX/lib\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}" >> "$shellrc"
-                echo Done
-                break;;
-            [Nn] | [Nn]o ) break;;
-            * ) echo "Please answer y or n.";;
-        esac
-    done
-
     echo "Cleaning up..."
-    cd $DEPS_PREFIX && rm -rf *.tar.gz ffmpeg_sources
+    cd $DEPS_PREFIX && rm -rf *.tar.gz ffmpeg_sources mesa* glu*
 else
     echo "Graphics build disabled..."
 fi
 
-CFLAGS="-I$DEPS_PREFIX/include -std=gnu99"
-LDFLAGS="-L$DEPS_PREFIX/lib"
+export CFLAGS="-I$DEPS_PREFIX/include -std=gnu99"
+export LDFLAGS="-L$DEPS_PREFIX/lib"
 cd $INSTALL_PREFIX/basilisk/src/ppr
 make && cd ../gl 
 make libglutils.a libfb_osmesa.a || { echo "failed building src/gl" && exit 1; }
+
+# Post installation actions
+# Ask user to add basilisk to PATH
+while ! grep -q 'BASILISK' $shellrc; do
+    msg="Add basilisk to PATH in $shellrc (y/n)? "
+    read -p "$msg" yn
+    case $yn in
+        [Yy] | [Yy]es )
+            echo "Export environment variables to shell config"
+            echo -e '\n#Basilisk Env' >> "$shellrc"
+            echo "export BASILISK=$PWD" >> "$shellrc"
+            echo 'export PATH=$PATH:$BASILISK' >> "$shellrc"  # single quotes to not expand $PATH
+            break;;
+        [Nn] | [Nn]o ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+
+# Ask user to add dependencies to different paths.
+while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$PATH:" != *":$DEPS_PREFIX/bin:"* ]]; do
+    msg="Add $DEPS_PREFIX/bin to PATH in $shellrc (y/n)? "
+    read -p "$msg" yn
+    case $yn in
+        [Yy] | [Yy]es )
+            echo "export PATH=\$PATH:$DEPS_PREFIX/bin" >> "$shellrc"
+            echo Done
+            break;;
+        [Nn] | [Nn]o ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; do
+    msg="Add $DEPS_PREFIX/lib to LIBRARY_PATH in $shellrc (y/n)? "
+    read -p "$msg" yn
+    case $yn in
+        [Yy] | [Yy]es )
+            echo "export LIBRARY_PATH=$DEPS_PREFIX/lib\${LIBRARY_PATH:+:\$LIBRARY_PATH}" >> "$shellrc"
+            echo Done
+            break;;
+        [Nn] | [Nn]o ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$LD_LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; do
+    msg="Add $DEPS_PREFIX/lib to LD_LIBRARY_PATH in $shellrc (y/n)? "
+    read -p "$msg" yn
+    case $yn in
+        [Yy] | [Yy]es )
+            echo "export LD_LIBRARY_PATH=$DEPS_PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}" >> "$shellrc"
+            echo Done
+            break;;
+        [Nn] | [Nn]o ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$C_INCLUDE_PATH:" != *":$DEPS_PREFIX/include:"* ]]; do
+    msg="Add $DEPS_PREFIX/include to C_INCLUDE_PATH in $shellrc (y/n)? "
+    read -p "$msg" yn
+    case $yn in
+        [Yy] | [Yy]es )
+            echo "export C_INCLUDE_PATH=$DEPS_PREFIX/lib\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}" >> "$shellrc"
+            echo Done
+            break;;
+        [Nn] | [Nn]o ) break;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
 
 echo "Installation finished..."
