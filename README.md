@@ -364,8 +364,7 @@ To ensure issue free compilation of your basilisk code it is recommended to use 
     - You likely only require one of the above, as if you have sudo access you can simply install the graphics binaries
     - `export INSTAL_PREFIX=/basilisk/install/dir`: This is the directory where basilisk will be installed. If not set the default is your home directory, ie `$HOME`.
     - `export DEPS_PREFIX=/dependencies/install/dir/`: This is the directory where the dependencies (ffmpeg/OSMesa/GLU) will be installed. If not set the default is `$HOME/local`
-
-- At the end the scripts asks the user if you want to add basilisk (and dependencies) to PATH. Additionally, the `lib` and `include` directories of the dependencies should be added to the c include and linker paths. This is recommended so that you don't need to pass the flags `-I$HOME/local/include` and `-L$HOME/local/lib` every time you compile a basilisk file. (Only if those directories are not in the respective paths)
+   - `export NO_MOD_PATH=yes`: If this variable is **NOT** specified, at the end the scripts adds basilisk (and dependencies) to PATH. Additionally, the `lib` and `include` directories of the dependencies are added to the c include and linker paths. This is recommended so that you don't need to pass the flags `-I$HOME/local/include` and `-L$HOME/local/lib` every time you compile a basilisk file. (Only add them if those directories are not already in the respective paths)
 
 ```bash
 cd ~
