@@ -10,7 +10,7 @@ if [[ ! -z $TESTING ]]; then
     source $HOME/.bashrc
     echo "Testing only"
     cd $BASILISK/test
-    make -j "$JOBS" >/dev/null || { echo 'testing failed' && exit 1; }
+    make -j "$JOBS" || { echo 'testing failed' && exit 1; }
     exit 0
 fi
 
