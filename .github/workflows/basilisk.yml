@@ -45,7 +45,9 @@ jobs:
         env: 
           TESTING : yes
           BASILISK: ${{ github.workspace }}/basilisk/src
-        run: ./install_basilisk.sh
+        run: |
+          source $HOME/.bashrc
+          ./install_basilisk.sh
 
   graphics:
     # The type of runner that the job will run on
@@ -80,4 +82,6 @@ jobs:
         env:
           TESTING : yes
           BASILISK: ${{ github.workspace }}/basilisk/src
-        run: ./install_basilisk.sh
+        run: |
+          source $HOME/.bashrc
+          ./install_basilisk.sh
