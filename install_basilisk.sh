@@ -1,3 +1,5 @@
+#!/bin/bash -l
+
 JOBS=$(nproc)
 # Where the basilisk will be installed
 INSTALL_PREFIX=${INSTALL_PREFIX:-$HOME}
@@ -153,70 +155,23 @@ make && cd ../gl
 make libglutils.a libfb_osmesa.a || { echo "failed building src/gl" && exit 1; }
 
 # Post installation actions
-# Ask user to add basilisk to PATH
-while ! grep -q 'BASILISK' $shellrc; do
-    msg="Add basilisk to PATH in $shellrc (y/n)? "
-    read -p "$msg" yn
-    case $yn in
-        [Yy] | [Yy]es )
-            echo "Export environment variables to shell config"
-            echo -e '\n#Basilisk Env' >> "$shellrc"
-            echo "export BASILISK=$PWD" >> "$shellrc"
-            echo 'export PATH=$PATH:$BASILISK' >> "$shellrc"  # single quotes to not expand $PATH
-            break;;
-        [Nn] | [Nn]o ) break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-
-# Ask user to add dependencies to different paths.
-while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$PATH:" != *":$DEPS_PREFIX/bin:"* ]]; do
-    msg="Add $DEPS_PREFIX/bin to PATH in $shellrc (y/n)? "
-    read -p "$msg" yn
-    case $yn in
-        [Yy] | [Yy]es )
-            echo "export PATH=\$PATH:$DEPS_PREFIX/bin" >> "$shellrc"
-            echo Done
-            break;;
-        [Nn] | [Nn]o ) break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; do
-    msg="Add $DEPS_PREFIX/lib to LIBRARY_PATH in $shellrc (y/n)? "
-    read -p "$msg" yn
-    case $yn in
-        [Yy] | [Yy]es )
-            echo "export LIBRARY_PATH=$DEPS_PREFIX/lib\${LIBRARY_PATH:+:\$LIBRARY_PATH}" >> "$shellrc"
-            echo Done
-            break;;
-        [Nn] | [Nn]o ) break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$LD_LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; do
-    msg="Add $DEPS_PREFIX/lib to LD_LIBRARY_PATH in $shellrc (y/n)? "
-    read -p "$msg" yn
-    case $yn in
-        [Yy] | [Yy]es )
-            echo "export LD_LIBRARY_PATH=$DEPS_PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}" >> "$shellrc"
-            echo Done
-            break;;
-        [Nn] | [Nn]o ) break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
-while [[ ! -z $BUILD_GRAPHICS ]] && [[ ":$C_INCLUDE_PATH:" != *":$DEPS_PREFIX/include:"* ]]; do
-    msg="Add $DEPS_PREFIX/include to C_INCLUDE_PATH in $shellrc (y/n)? "
-    read -p "$msg" yn
-    case $yn in
-        [Yy] | [Yy]es )
-            echo "export C_INCLUDE_PATH=$DEPS_PREFIX/lib\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}" >> "$shellrc"
-            echo Done
-            break;;
-        [Nn] | [Nn]o ) break;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
+if ! grep -q 'BASILISK' $shellrc && [[ -z $NO_MOD_PATH ]]; then
+    echo "Export environment variables to shell config"
+    echo -e '\n#Basilisk Env' >> "$shellrc"
+    echo "export BASILISK=$PWD" >> "$shellrc"
+    echo 'export PATH=$PATH:$BASILISK' >> "$shellrc"  # single quotes to not expand $PATH
+fi
+if [[ ! -z $BUILD_GRAPHICS && -z $NO_MOD_PATH ]] && [[ ":$PATH:" != *":$DEPS_PREFIX/bin:"* ]]; then
+    echo "export PATH=\$PATH:$DEPS_PREFIX/bin" >> "$shellrc"
+fi
+if [[ ! -z $BUILD_GRAPHICS && -z $NO_MOD_PATH ]] && [[ ":$LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; then
+    echo "export LIBRARY_PATH=$DEPS_PREFIX/lib\${LIBRARY_PATH:+:\$LIBRARY_PATH}" >> "$shellrc"
+fi
+if [[ ! -z $BUILD_GRAPHICS && -z $NO_MOD_PATH ]] && [[ ":$LD_LIBRARY_PATH:" != *":$DEPS_PREFIX/lib:"* ]]; then
+    echo "export LD_LIBRARY_PATH=$DEPS_PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}" >> "$shellrc"
+fi
+if [[ ! -z $BUILD_GRAPHICS && -z $NO_MOD_PATH ]] && [[ ":$C_INCLUDE_PATH:" != *":$DEPS_PREFIX/include:"* ]]; then
+        echo "export C_INCLUDE_PATH=$DEPS_PREFIX/lib\${C_INCLUDE_PATH:+:\$C_INCLUDE_PATH}" >> "$shellrc"
+fi
 
 echo "Installation finished..."
